@@ -1,32 +1,44 @@
 # Shadowrocket 分流配置
 
-基于 [johnshall/Shadowrocket-ADBlock-Rules-Forever](https://github.com/johnshall/Shadowrocket-ADBlock-Rules-Forever) 的 `lazy_group.conf`，叠加个人自定义规则层。
+基于 [johnshall/Shadowrocket-ADBlock-Rules-Forever](https://github.com/johnshall/Shadowrocket-ADBlock-Rules-Forever) 的 `lazy_group.conf`（2026-11-03 版），叠加个人自定义规则层。
 
-## 订阅地址
+## 配置文件地址（在 Shadowrocket「配置」里添加这个）
 
 ```
 https://cdn.jsdelivr.net/gh/levi-dev-bot/shadowrocket-config@main/lazy_group.conf
 ```
 
+这个地址是**规则配置文件**，不是节点订阅。节点订阅仍用你自己的机场那条，两者分开互不影响。
+
 ## 文件说明
 
-| 文件 | 作用 | 什么时候改 |
-|---|---|---|
-| `lazy_group.conf` | 主配置（General / Proxy Group / Rule / Host / Rewrite / MITM） | 几乎不动 |
-| `custom.list` | 个人自定义规则集，插在规则链最前面 | **日常只改这个** |
+- `lazy_group.conf` —— 主配置（General / Proxy Group / Rule / Host / Rewrite / MITM），一般不动
+- `custom.list` —— 个人自定义规则集，**日常只改这个**
 
-`custom.list` 通过 `RULE-SET` 在主配置中排第一位匹配，优先级高于所有内置规则集，所以同一条域名在内置列表里被判为 DIRECT 时，写在 `custom.list` 里可以覆盖成 PROXY，反过来也一样。
+`custom.list` 在 `[Rule]` 里通过 `RULE-SET` 排在第一位匹配，优先级高于所有内置规则集。所以同一个域名内置列表判 DIRECT，你在 `custom.list` 里写 PROXY 就能覆盖，反过来也一样。
 
-## 更新方式
+## 规则写法
 
-Shadowrocket 里：`配置` → 当前配置 → 右上角更新（或下拉刷新）。
+```
+DOMAIN-SUFFIX,example.com,PROXY        # 整站及子域走代理
+DOMAIN,www.example.com,DIRECT          # 仅这一个域名直连
+DOMAIN-KEYWORD,abc,REJECT              # 关键词拦截
+```
 
-主配置里的 `update-url` 已指向本仓库，Shadowrocket 自动更新时拉的也是这里。
+策略除了 `PROXY` / `DIRECT` / `REJECT`，也可以直接写分组名：`香港节点` `台湾节点` `日本节点` `新加坡节点` `韩国节点` `美国节点` `AI` `YouTube` `Netflix` `TikTok` 等。
 
-## 改完没生效？
+## 更新
 
-jsDelivr 是 CDN，有缓存。提交后如果拉到的还是旧版本，等 1-2 分钟，或在 Shadowrocket 里换成下面这个 GitHub 直连地址临时用：
+Shadowrocket：`配置` → 选中该配置 → 右上角「更新」（或下拉刷新）。
+
+主配置内 `update-url` 已指向本仓库，自动更新拉的就是这里。
+
+## CDN 缓存说明
+
+jsDelivr 有缓存。改完若拉到旧版本，等 1-2 分钟；或临时换成 GitHub 直连：
 
 ```
 https://raw.githubusercontent.com/levi-dev-bot/shadowrocket-config/main/custom.list
 ```
+
+注意反过来：GitHub raw 自己有约 5 分钟缓存，jsDelivr 可以用 purge 接口强制刷新，所以日常推荐用 jsDelivr 那条。
