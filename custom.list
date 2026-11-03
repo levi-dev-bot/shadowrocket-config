@@ -7,3 +7,5 @@
 #
 # —— 下面开始写你的规则 ——
 
+
+DOMAIN-SUFFIX,ipkk.com,PROXY
